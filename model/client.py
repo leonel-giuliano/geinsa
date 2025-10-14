@@ -1,7 +1,22 @@
-import  firebase_admin
-from    firebase_admin                          import credentials
-from    firebase_admin                          import firestore
-from    google.cloud.firestore_v1.base_query    import FieldFilter, Or
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+
+def on_snapshot(col_snapshot, changes, read_time):
+    global is_init_loaded
+
+    if is_init_loaded == False:
+        print("Loaded first docs...")
+        is_init_loaded = True
+
+        return
+
+    
+    print(f"Snapshot received at {read_time}")
+    for change in changes:
+        if change.type.name == "ADDED":
+            print(f"New document: {change.document.id} => {change.document.to_dict()}")
 
 
 def get_collection(coll_name):
@@ -20,12 +35,15 @@ def get_collection(coll_name):
     return doc_list
 
 
-cred = credentials.Certificate("./firebase-cred.json")
+cred = credentials.Certificate("../firebase-cred.json")
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
+coll_ref = db.collection("busquedas")
 
-collection = get_collection("mensajes")
-for doc in collection:
-    print(f"Id: {doc["id"]}")
-    print(f"Data: {doc["data"]}")
+is_init_loaded = False
+watch = coll_ref.on_snapshot(on_snapshot)
+
+print("Listening...")
+while True:
+    pass
