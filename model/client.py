@@ -2,21 +2,25 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
+import config
 from model import *
 
 
 def on_snapshot(col_snapshot, changes, read_time):
-    global is_init_loaded
+    #if not config.is_init_loaded:
+    #    print("Loaded first docs...")
+    #    config.is_init_loaded = True
 
-    if not is_init_loaded:
-        print("Loaded first docs...")
-        is_init_loaded = True
+    #    return
 
-        return
-
-    results = recommend("dólar", model, embedder, article_embeddings, aid_map, item_features, 3)
+    results = recommend("dólar",
+                        config.model,
+                        config.embedder,
+                        config.article_embeddings,
+                        config.aid_map,
+                        config.item_features, 3)
     for aid, _, _ in results:
-        temp = articles.loc[articles["id"] == aid]["title"].squeeze()
+        temp = config.articles.loc[config.articles["id"] == aid]["title"].squeeze()
         print(f"{aid} | {temp}")
 
     #print(f"Snapshot received at {read_time}")

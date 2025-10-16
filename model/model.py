@@ -82,7 +82,7 @@ def main():
     config.embedder = data["embedder"]
     config.article_embeddings = data["article_embeddings"]
 
-    config.articles = pd.read_csv("/content/drive/MyDrive/Geinsa/data/noticias_econojournal_completo.csv")
+    config.articles = pd.read_csv("../data/noticias_econojournal_completo.csv")
     config.articles = config.articles.rename(columns={
         "ID": "id",
         "Título": "title",
@@ -91,6 +91,7 @@ def main():
     })
 
     _, _, config.aid_map, _ = ds.mapping()
+
 
     coll_ref.on_snapshot(on_snapshot)
 
