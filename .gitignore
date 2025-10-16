@@ -2,6 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
 firebase-cred.json
+*.pkl
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
