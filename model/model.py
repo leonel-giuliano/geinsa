@@ -1,9 +1,14 @@
 import re
 import joblib
 import pandas as pd
+import firebase_admin
 
+from firebase_admin import credentials
+from firebase_admin import firestore
 from sentence_transformers import util
 
+import config
+from client import *
 
 UID_PRED = 0
 
@@ -61,28 +66,37 @@ def recommend(query, model, embedder, article_embeddings, aid_map, item_features
 
 
 def main():
+    # Initiate communiaction with the database
+    cred = credentials.Certificate("../firebase-cred.json")
+    firebase_admin.initialize_app(cred)
+
+    db = firestore.client()
+    coll_ref = db.collection("busquedas")
+
+    # Get the model data
     data = joblib.load("model-data.pkl")
 
-    model = data["model"]
-    item_features = data["item_features"]
+    config.model = data["model"]
+    config.item_features = data["item_features"]
     ds = data["dataset"]
-    embedder = data["embedder"]
-    article_embeddings = data["article_embeddings"]
+    config.embedder = data["embedder"]
+    config.article_embeddings = data["article_embeddings"]
 
-    articles = pd.read_csv("/content/drive/MyDrive/Geinsa/data/noticias_econojournal_completo.csv")
-    articles = articles.rename(columns={
+    config.articles = pd.read_csv("/content/drive/MyDrive/Geinsa/data/noticias_econojournal_completo.csv")
+    config.articles = config.articles.rename(columns={
         "ID": "id",
         "Título": "title",
         "Descripción": "description",
         "Cuerpo": "body"
     })
 
-    _, _, aid_map, _ = ds.mapping()
+    _, _, config.aid_map, _ = ds.mapping()
 
-    results = recommend("dólar", model, embedder, article_embeddings, aid_map, item_features, 3)
-    for aid, _, _ in results:
-        temp = articles.loc[articles["id"] == aid]["title"].squeeze()
-        print(f"{aid} | {temp}")
+    coll_ref.on_snapshot(on_snapshot)
+
+    print("Listening...")
+    while True:
+        pass
 
 
 if __name__ == "__main__":
