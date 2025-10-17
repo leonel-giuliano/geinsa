@@ -74,7 +74,7 @@ def main():
     coll_ref = db.collection("busquedas")
 
     # Get the model data
-    data = joblib.load("model-data.pkl")
+    data = joblib.load("../data/model-data.pkl")
 
     config.model = data["model"]
     config.item_features = data["item_features"]

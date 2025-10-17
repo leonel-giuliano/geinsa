@@ -7,11 +7,11 @@ from model import *
 
 
 def on_snapshot(col_snapshot, changes, read_time):
-    #if not config.is_init_loaded:
-    #    print("Loaded first docs...")
-    #    config.is_init_loaded = True
+    if not config.is_init_loaded:
+        print("Loaded first docs...")
+        config.is_init_loaded = True
 
-    #    return
+        return
 
     results = recommend("dólar",
                         config.model,
