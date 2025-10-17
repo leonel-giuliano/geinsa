@@ -39,20 +39,24 @@ def semantic_rank(query, embedder, article_embeddings, top_k=50):
     query_emb = embedder.encode(query, convert_to_tensor=True)
 
     # Transform the embeddings into actual scores
+    print("\tCalculating scores...")
     scores = {aid: float(util.cos_sim(query_emb, emb))
               for aid, emb in article_embeddings.items()}
 
     # Sort by similarity
     # Saves only the 'k' num of first items
+    print("\tRanking scores...")
     ranked = sorted(scores.items(), key=lambda x: -x[SCORE_IX])[:top_k]
     return ranked
 
 
 def recommend(query, model, embedder, article_embeddings, aid_map, item_features, top_k=50):
-    # Get the articles thar are going to be ranked
+    # Get the articles which are going to be ranked
+    print("Creating semantic recommendations...")
     candidates = semantic_rank(query, embedder, article_embeddings, top_k)
     article_ids = [aid for aid, _ in candidates]
 
+    print("Creating presonal recommendations...")
     aids = [aid_map[aid] for aid in article_ids]
     scores = model.predict(UID_PRED, aids, item_features=item_features)
 
@@ -61,6 +65,7 @@ def recommend(query, model, embedder, article_embeddings, aid_map, item_features
               for (aid, sem_score), model_score in zip(candidates, scores)]
 
     # Rerank the recommendations prioritizing the model
+    print("Ranking results...")
     ranked = sorted(result, key=lambda x: -x[MODEL_SCORE_IX])
     return ranked
 
