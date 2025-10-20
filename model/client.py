@@ -36,11 +36,13 @@ def on_snapshot(col_snapshot, changes, read_time):
                                 config.article_embeddings,
                                 config.aid_map,
                                 config.item_features)
+            doc_data = { "mensaje": msg, "ids": [] }
             for aid, _, _ in results:
-                doc_data = { "id": aid }
-                config.answer_ref.add(doc_data)
+                doc_data["ids"].append(aid)
                 temp = config.articles.loc[config.articles["id"] == aid]["title"].squeeze()
                 print(f"{aid} | {temp}")
+
+            config.answer_ref.add(doc_data)
 
 
 
