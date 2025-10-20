@@ -72,11 +72,12 @@ def recommend(query, model, embedder, article_embeddings, aid_map, item_features
 
 def main():
     # Initiate communiaction with the database
-    cred = credentials.Certificate("../firebase-cred.json")
+    cred = credentials.Certificate("../data/firebase-cred.json")
     firebase_admin.initialize_app(cred)
 
-    db = firestore.client()
-    coll_ref = db.collection("busquedas")
+    config.db = firestore.client()
+    config.answer_ref = config.db.collection("respuestas")
+    coll_ref = config.db.collection("busquedas")
 
     # Get the model data
     data = joblib.load("../data/model-data.pkl")

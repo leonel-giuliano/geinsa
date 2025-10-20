@@ -13,20 +13,35 @@ def on_snapshot(col_snapshot, changes, read_time):
 
         return
 
-    results = recommend("dólar",
-                        config.model,
-                        config.embedder,
-                        config.article_embeddings,
-                        config.aid_map,
-                        config.item_features, 3)
-    for aid, _, _ in results:
-        temp = config.articles.loc[config.articles["id"] == aid]["title"].squeeze()
-        print(f"{aid} | {temp}")
+    #results = recommend("dólar",
+    #                    config.model,
+    #                    config.embedder,
+    #                    config.article_embeddings,
+    #                    config.aid_map,
+    #                    config.item_features, 3)
+    #for aid, _, _ in results:
+    #    temp = config.articles.loc[config.articles["id"] == aid]["title"].squeeze()
+    #    print(f"{aid} | {temp}")
 
-    #print(f"Snapshot received at {read_time}")
-    #for change in changes:
-    #    if change.type.name == "ADDED":
-    #        print(f"New document: {change.document.id} => {change.document.to_dict()}")
+    print(f"Snapshot received at {read_time}")
+    for change in changes:
+        if change.type.name == "ADDED":
+            doc = change.document.to_dict()
+            msg = doc.get("mensaje")
+
+            print(f"Mensaje: {msg}")
+            results = recommend(msg,
+                                config.model,
+                                config.embedder,
+                                config.article_embeddings,
+                                config.aid_map,
+                                config.item_features)
+            for aid, _, _ in results:
+                doc_data = { "id": aid }
+                config.answer_ref.add(doc_data)
+                temp = config.articles.loc[config.articles["id"] == aid]["title"].squeeze()
+                print(f"{aid} | {temp}")
+
 
 
 def get_collection(coll_name, db):

@@ -1,5 +1,7 @@
 is_init_loaded = False
 
+db = None
+answer_ref = None
 articles = None
 model = None
 embedder = None
