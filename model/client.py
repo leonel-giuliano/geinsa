@@ -27,7 +27,8 @@ def on_snapshot(col_snapshot, changes, read_time):
     for change in changes:
         if change.type.name == "ADDED":
             doc = change.document.to_dict()
-            msg = doc.get("mensaje")
+            msg = doc.get("termino")
+            print(msg)
 
             print(f"Mensaje: {msg}")
             results = recommend(msg,
