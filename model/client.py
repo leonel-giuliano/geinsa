@@ -37,10 +37,30 @@ def on_snapshot(col_snapshot, changes, read_time):
                                 config.article_embeddings,
                                 config.aid_map,
                                 config.item_features)
-            doc_data = { "mensaje": msg, "ids": [] }
+            doc_data = {
+                "message": msg,
+                "ids": [],
+                "titles": [],
+                "descriptions": [],
+                "bodies": [],
+                "imgs": [],
+                "urls": [],
+                "keywords": []
+            }
+
+            print("Creating formatted output...")
             for aid, _, _ in results:
+                temp = config.articles.loc[config.articles["id"] == aid]
+
                 doc_data["ids"].append(aid)
-                temp = config.articles.loc[config.articles["id"] == aid]["title"].squeeze()
+                doc_data["titles"].append(temp["title"].squeeze())
+                doc_data["descriptions"].append(temp["description"].squeeze())
+                doc_data["bodies"].append(temp["body"].squeeze())
+                doc_data["imgs"].append(temp["Imagen"].squeeze())
+                doc_data["urls"].append(temp["URL"].squeeze())
+                doc_data["keywords"].append(temp["PalabraClave"].squeeze())
+
+                temp = temp["title"].squeeze()
                 print(f"{aid} | {temp}")
 
             config.answer_ref.add(doc_data)
