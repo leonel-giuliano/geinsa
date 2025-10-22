@@ -27,7 +27,7 @@ def on_snapshot(col_snapshot, changes, read_time):
     for change in changes:
         if change.type.name == "ADDED":
             doc = change.document.to_dict()
-            msg = doc.get("termino")
+            msg = doc.get("palabra")
             print(msg)
 
             print(f"Mensaje: {msg}")

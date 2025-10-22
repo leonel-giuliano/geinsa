@@ -77,7 +77,7 @@ def main():
 
     config.db = firestore.client()
     config.answer_ref = config.db.collection("respuestas")
-    coll_ref = config.db.collection("busquedas")
+    coll_ref = config.db.collection("busqueda")
 
     # Get the model data
     data = joblib.load("../data/model-data.pkl")
