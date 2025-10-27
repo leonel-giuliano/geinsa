@@ -130,26 +130,6 @@ def semantic_rank(query, embedder, art, article_embeddings, top_k=50):
     return ranked
 
 
-def recommend(query, model, embedder, article_embeddings, aid_map, item_features, top_k=50):
-    # Get the articles which are going to be ranked
-    print("Creating semantic recommendations...")
-    candidates = semantic_rank(query, embedder, article_embeddings, top_k)
-    article_ids = [aid for aid, _ in candidates]
-
-    print("Creating presonal recommendations...")
-    aids = [aid_map[aid] for aid in article_ids]
-    scores = model.predict(UID_PRED, aids, item_features=item_features)
-
-    # Combine semantic + LightFM scores (weighted)
-    result = [(aid, sem_score, model_score)
-              for (aid, sem_score), model_score in zip(candidates, scores)]
-
-    # Rerank the recommendations prioritizing the model
-    print("Ranking results...")
-    ranked = sorted(result, key=lambda x: -x[MODEL_SCORE_IX])
-    return ranked
-
-
 def model_recommend_new(new_articles_df,
                         join_strcols,
                         tfidf,
@@ -303,8 +283,8 @@ def main():
     config.tfidf = data["tfidf"]
     config.terms = data["terms"]
 
-    #config.articles = pd.read_csv("../data/noticias_econojournal_completo.csv")
-    config.articles = pd.read_csv("../data/new_articles.csv")
+    config.articles = pd.read_csv("../data/noticias_econojournal_completo.csv")
+    #config.articles = pd.read_csv("../data/new_articles.csv")
     config.articles = config.articles.rename(columns={
         "ID": "id",
         "Título": "title",
@@ -313,17 +293,12 @@ def main():
     })
 
     _, _, config.aid_map, _ = config.ds.mapping()
-    #semantic_rank("algo", config.embedder, config.articles, config.article_embeddings)
-    recommend("algo", config.embedder, config.articles, config.article_embeddings, config.aid_map, config.item_features)
 
-
-    '''
     coll_ref.on_snapshot(on_snapshot)
 
     print("Listening...")
     while True:
         pass
-    '''
 
 
 if __name__ == "__main__":

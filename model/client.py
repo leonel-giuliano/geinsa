@@ -32,8 +32,8 @@ def on_snapshot(col_snapshot, changes, read_time):
 
             print(f"Mensaje: {msg}")
             results = recommend(msg,
-                                config.model,
                                 config.embedder,
+                                config.articles,
                                 config.article_embeddings,
                                 config.aid_map,
                                 config.item_features)
