@@ -46,7 +46,7 @@ def on_snapshot(col_snapshot, changes, read_time):
                 "imgs": [],
                 "urls": [],
                 "keywords": [],
-                "date": []
+                "dates": []
             }
 
             print("Creating formatted output...")
@@ -60,7 +60,7 @@ def on_snapshot(col_snapshot, changes, read_time):
                 doc_data["imgs"].append(temp["Imagen"].squeeze())
                 doc_data["urls"].append(temp["URL"].squeeze())
                 doc_data["keywords"].append(temp["PalabraClave"].squeeze())
-                doc_data["date"].append(temp["Fecha"].squeeze())
+                doc_data["dates"].append(temp["Fecha"].squeeze())
 
                 temp = temp["title"].squeeze()
                 print(f"{aid} | {temp}")
